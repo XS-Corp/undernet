@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="color-scheme" content="light">
+<title>UnderNet - The Underground's Homepage</title>
+<style>
+:root { --black:#202024; --ink:#24212e; --paper:#fdfbf1; --line:#9994a7; --purple:#403164; --dark-purple:#2c2545; --link:#403b9d; --red:#a84255; }
+* { box-sizing:border-box; }
+html,body { width:100%; height:100%; margin:0; }
+body { background:#93c1e7; font:12px/1.35 Verdana, Geneva, sans-serif; color:var(--ink); overflow:hidden; }
+button,input { font:inherit; border-radius:0; }
+button { cursor:pointer; }
+a,button { -webkit-tap-highlight-color:transparent; }
+a { color:#383993; text-decoration:underline; cursor:pointer; }
+a:hover { color:#bd476c; }
+button:focus-visible,a:focus-visible,input:focus-visible { outline:2px dotted #a14a5d; outline-offset:2px; }
+[hidden] { display:none!important; }
+#sky { position:fixed;inset:0;width:100%;height:100%;image-rendering:pixelated;pointer-events:none; }
+.desktop-label { position:absolute;top:16px;left:18px;font:12px monospace;color:#37648a;text-shadow:1px 1px #d4ebff;letter-spacing:1px; }
+.window { position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);width:min(970px,calc(100% - 94px));height:min(716px,calc(100% - 88px));min-width:330px;min-height:330px;background:#c4bfd0;border:2px solid #1f2130;box-shadow:inset 2px 2px #f4eef7,inset -2px -2px #514e65,7px 7px 0 #394866,11px 11px 0 #7c91aa;display:flex;flex-direction:column; }
+.window-title { display:flex;align-items:center;gap:7px;background:#3d315e;color:white;min-height:28px;padding:3px 4px 3px 9px;font: bold 12px/1.2 monospace;letter-spacing:.2px; }
+.window-title .square { width:13px;height:13px;display:inline-block;border:2px solid white;background:#f9c6a6; }
+.window-title strong { flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap; }
+.win-controls {display:flex;gap:3px;}
+.win-controls span { display:grid;place-items:center;width:22px;height:20px;background:#ccc7d9;border:2px solid;border-color:#fff #514861 #514861 #fff;color:#302947;font: bold 13px monospace; }
+.menubar { height:24px;display:flex;align-items:center;gap:22px;padding-left:12px;background:#cfcbd4;border-bottom:1px solid #747484;font:11px Tahoma,Arial,sans-serif; }
+.addressbar { min-height:42px;display:flex;align-items:center;gap:6px;padding:5px 9px;background:#d8d5df;border-bottom:2px solid #777185; }
+.navbtn { height:27px;min-width:29px;background:#dfdce7;border:2px solid;border-color:#fff #797386 #797386 #fff;color:#302d42;font: bold 15px monospace; }
+.navbtn:active:not(:disabled),.navbtn.active {border-color:#797386 #fff #fff #797386;}
+.navbtn:disabled {opacity:.4;cursor:default;}
+.address-label {font:11px Tahoma,Arial,sans-serif;padding-left:5px;}
+.address-field {min-width:0;flex:1;overflow:hidden;white-space:nowrap;text-overflow:ellipsis;height:27px;border:2px solid;border-color:#777185 #fff #fff #777185;background:white;padding:4px 7px;font:12px monospace;}
+.address-field span {color:#55439c;}
+.connect {font:10px monospace; white-space:nowrap;color:#5b566a;}
+.tabbar { display:flex;align-items:end;height:28px;padding:4px 10px 0;background:#b7b1c6;gap:6px;border-bottom:2px solid #393044; }
+.tab {font: bold 11px monospace;padding:6px 11px 5px;background:#e7e4ec;border:2px solid #555064;border-bottom:none;color:#383146;max-width:70%;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.tab-label {font:10px monospace;color:#514b5c;padding-bottom:6px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.body {flex:1;min-height:0;display:flex;background:var(--paper);}
+.sidebar { width:171px;flex:0 0 171px;overflow-y:auto;background:#e6e3e8;border-right:3px double #8e8996;padding:12px 10px 15px; }
+.site-logo { position:relative;display:inline-block;font: bold 26px/1.0 'Courier New',monospace;letter-spacing:-3px;color:#392961;text-shadow:2px 2px #c8accd; margin:2px 0 0; }
+.site-logo i {font-style:normal;color:#a13f64;}
+.logo-under {font:10px/1.4 monospace;color:#555064;letter-spacing:.1px;margin:4px 0 16px;}
+.side-heading {font:bold 11px monospace;color:#696173;border-bottom:1px dashed #8a8396;padding:0 0 5px;margin:14px 0 6px;}
+.side-link { display:block;width:100%;text-align:left;padding:5px 2px;border:0;background:transparent;color:#393181;font:12px monospace;text-decoration:underline; }
+.side-link.current {color:#822d48;font-weight:bold;text-decoration:none;}
+.side-link:before {content:'> ';color:#786882;}
+.side-note {font:11px/1.5 monospace;color:#5b5b70;padding:7px;border:1px dashed #8d8495;background:#f7f2f4;margin:13px 0 10px;}
+.pixel-link {background:#ffebaa;border:2px solid;border-color:white #7b6972 #7b6972 white;color:#402936;padding:7px 6px;width:100%;text-align:center;font: bold 11px/1.3 monospace;box-shadow:1px 1px 0 #3f304e;}
+.pixel-link:active {transform:translate(1px,1px);box-shadow:none;}
+.ad {display:block;margin-top:16px;border:2px dotted #978a9b;background:#fff9e8;text-align:center;padding:7px 4px;color:#595371;font:10px/1.55 monospace;}
+.ad b {color:#a44665;}
+.page {flex:1;min-width:0;overflow-y:auto;position:relative;background:var(--paper);scrollbar-color:#bab0c0 #f4eff1;}
+.top-alert {background:#fff2bb;border-bottom:1px dashed #c19e79;color:#433a41;padding:7px 15px;font:11px monospace;}
+.top-alert a {font-weight:bold;}
+.content {padding:16px 24px 30px;}
+.section-line {font: bold 11px monospace;letter-spacing:.5px;color:#704a74;margin:0 0 8px;}
+.headline {font:bold 24px/1.0 'Courier New',monospace;letter-spacing:-1.5px;color:#332f40;margin:1px 0 8px;}
+.smallnote {font:12px/1.45 monospace;color:#686273;margin:0 0 13px;}
+.tiny-badges {display:flex;flex-wrap:wrap;gap:6px;margin-bottom:17px;}
+.tiny-badges span {border:1px solid #9f9aa9;padding:3px 5px;color:#625875;font:10px monospace;background:#f2edf2;}
+.bar { display:flex;align-items:center;flex-wrap:wrap;gap:7px;border-bottom:2px solid #302b3c;padding-bottom:7px; }
+.bar strong {font:bold 13px monospace;flex:1;}
+.bar input {max-width:190px;width:36%;min-width:110px;background:#fff;border:1px solid #96919d;padding:5px 7px;color:#272532;font:11px monospace;}
+.bar button {background:#f1eff3;border:1px solid #8d8793;padding:5px 8px;color:#353243;font:11px monospace;}
+.post {display:grid;grid-template-columns:44px minmax(0,1fr);gap:10px;border-bottom:1px dashed #aaa4ad;padding:12px 0 13px;background:transparent;}
+.post.highlight {background:#fff1d2;}
+.avatar {width:40px;height:40px;border:2px solid #302935;image-rendering:pixelated;background:#b7adbd;}
+.post-info {min-width:0;}
+.post-head {display:flex;align-items:baseline;gap:8px;flex-wrap:wrap;font:12px/1.3 monospace;}
+.post-head .user {font-weight:bold;color:#32295b;text-decoration:underline;}
+.post-head .time {font:10px monospace;color:#8c8291;}
+.post-head .post-id {font:10px monospace;color:#a79caa;margin-left:auto;}
+.msg {font:12px/1.47 monospace;white-space:pre-line;color:#292431;padding:7px 0 6px;word-break:break-word;}
+.attachment {border-left:3px solid #b79fbb;color:#5c4b71;background:#f1edf0;padding:6px 9px;font:11px monospace;margin:4px 0 8px;}
+.meta {display:flex;gap:14px;flex-wrap:wrap;font:11px monospace;align-items:center;}
+.meta button {border:0;padding:0;background:transparent;text-decoration:underline;color:#5e527d;font:inherit;}
+.meta button.liked {color:#a3354e;font-weight:bold;}
+.meta button.saved {color:#a3354e;font-weight:bold;}
+.reply {display:none;gap:5px;margin-top:9px;}
+.reply.visible {display:flex;}
+.reply input {flex:1;min-width:0;padding:5px;background:#fff;border:1px solid #9f98a8;font:11px monospace;}
+.reply button {border:1px solid #73697b;background:#e8e2ed;color:#483a55;}
+.reply-list {margin-top:6px;font:11px monospace;color:#63556d;white-space:pre-line;}
+.empty {padding:25px 0;color:#675e6e;font:12px monospace;}
+.footer-copy {color:#aaa1a9;padding:18px 0 0;font:10px monospace;text-align:center;}
+.notice-box {border:2px dashed #a4a0a5;background:#fff9e8;padding:13px;margin:15px 0;font:12px/1.7 monospace;}
+.notice-box strong {color:#993e5d;}
+.directory a {display:block;padding:7px 0;border-bottom:1px dotted #999;color:#383993;font:12px monospace;}
+.portal {display:flex;flex:1;min-width:0;min-height:0;flex-direction:column;background:white;}
+.portal-tools {display:flex;gap:9px;align-items:center;flex-wrap:wrap;background:#f4f0f0;border-bottom:1px solid #8e8899;padding:7px 10px;font:11px monospace;}
+.portal-tools b {color:#51365c;}
+.portal-tools button {padding:3px 6px;background:white;border:1px solid #8e8899;color:#3e3b76;}
+.portal-frame {border:0;flex:1;min-height:0;width:100%;background:white;}
+.portal-caption {background:#e9e5e7;border-top:1px solid #9b929c;color:#625767;font:10px monospace;padding:5px 8px;}
+.status {height:22px;flex:none;background:#ddd9df;border-top:2px solid #726e7b;display:flex;align-items:center;justify-content:space-between;gap:12px;padding:2px 10px;font:10px monospace;color:#4c4554;}
+.status b {color:#328065;}
+.toast {position:absolute;bottom:28px;right:14px;background:#fff4d2;border:2px solid #776785;box-shadow:3px 3px #40334e;padding:7px 12px;font:11px monospace;z-index:5;display:none;max-width:min(330px,90%);}
+.toast.visible {display:block;}
+@media(max-width:760px){.window {width:calc(100% - 22px);height:calc(100% - 25px);}.desktop-label{display:none;}.sidebar{width:146px;flex-basis:146px;padding:10px 7px;}.content{padding:12px 13px 22px;}.headline{font-size:21px;}.top-alert{padding:6px 10px;}.tab-label,.connect{display:none;}}
+@media(max-width:540px){.window{height:calc(100% - 15px);width:calc(100% - 12px);}.body{flex-direction:column;}.sidebar{width:100%;flex:0 0 auto;max-height:87px;overflow:hidden;padding:5px 8px;border:0;border-bottom:2px solid #a8a0b2;display:flex;align-items:center;gap:8px;flex-wrap:nowrap;}.site-logo{font-size:18px;flex:0 0 auto;}.logo-under,.side-heading,.side-note,.ad{display:none;}.side-link{width:auto;flex:none;font-size:10px;padding:4px 1px;}.side-link:before{display:none;}.pixel-link{width:auto;flex:none;font-size:9px;padding:4px;}.content{padding:11px 13px 20px;}.headline{font-size:19px;}.bar input{max-width:120px;}.status{font-size:9px;}}
+@media(max-height:600px){.window{height:calc(100% - 18px);}.desktop-label{display:none;}.menubar{height:19px;}.content{padding-top:10px;}.smallnote{margin-bottom:8px;}.tiny-badges{margin-bottom:9px;}}
+@media(prefers-reduced-motion:reduce){*{scroll-behavior:auto!important;}}
+</style>
+</head>
+<body>
+<!-- EDIT THIS ONE LINE to set the website opened by the SURFACE LINK button. -->
+<script>const MY_SITE_URL = "https://example.com/";</script>
+<canvas id="sky" width="480" height="320" aria-hidden="true"></canvas>
+<div class="desktop-label">* A quiet day in the Underground.</div>
+<div class="window" role="region" aria-label="UnderNet retro browser">
+  <div class="window-title"><span class="square" aria-hidden="true"></span><strong>UnderNet Explorer 1.02 - [ monsterboard.htm ]</strong><div class="win-controls" aria-hidden="true"><span>_</span><span>□</span><span>×</span></div></div>
+  <div class="menubar"><span><u>F</u>ile</span><span><u>E</u>dit</span><span><u>V</u>iew</span><span><u>H</u>elp</span></div>
+  <div class="addressbar"><button class="navbtn" id="back" title="Back" aria-label="Back">‹</button><button class="navbtn" id="forward" title="Forward" aria-label="Forward">›</button><button class="navbtn" id="home" title="Home" aria-label="Home">⌂</button><button class="navbtn" id="refresh" title="Reload" aria-label="Reload">↻</button><div class="address-label">Address:</div><div class="address-field" id="address">http://undernet.mon/board/</div><span class="connect">● 56k</span></div>
+  <div class="tabbar"><div class="tab" id="tab-label">[ UnderNet / message board ]</div><div class="tab-label">guest_004 · connected from SNOWDIN</div></div>
+  <div class="body">
+    <aside class="sidebar" id="sidebar">
+      <div><div class="site-logo">under<i>NET</i></div><div class="logo-under">the monster internet<br>since some time ago</div></div>
+      <div class="side-heading">SITE MAP</div>
+      <button class="side-link current" data-view="feed">the board</button>
+      <button class="side-link" data-view="saved">bookmarks</button>
+      <button class="side-link" data-view="directory">directory</button>
+      <button class="side-link" data-view="guestbook">guestbook</button>
+      <div class="side-heading">OUTSIDE LINKS</div>
+      <button class="pixel-link" id="sidebar-portal">SURFACE LINK<br>&gt;&gt; GO &lt;&lt;</button>
+      <div class="side-note">NEWS:<br>the wi-fi in Waterfall is still broken.<br><br>sorry.<br>— royal lab</div>
+      <div class="ad">THIS SPACE FOR RENT<br><b>MTT BRAND<br>PRODUCTS™</b><br>call 1-800-MTT</div>
+    </aside>
+    <main class="page" id="page">
+      <div class="top-alert"><b>NOTICE [10/??]:</b> Surface connection test is up. <a href="#" data-portal>Try it here</a> (probably safe).</div>
+      <div class="content" id="content"></div>
+    </main>
+    <section class="portal" id="portal" hidden aria-label="External website">
+      <div class="portal-tools"><button id="portal-back">&lt; back to UnderNet</button><b>EXTERNAL PAGE</b><span id="portal-host"></span><button id="portal-reload">reload</button><button id="portal-new">new window ↗</button></div>
+      <iframe class="portal-frame" id="portal-frame" title="External website" referrerpolicy="strict-origin-when-cross-origin"></iframe>
+      <div class="portal-caption">If the page is blank, its host may block embedding. Try "new window".</div>
+    </section>
+  </div>
+  <div class="status"><span><b>● ONLINE</b> <span id="status-text">waiting for messages...</span></span><span>underNET © 20XX // 4 visitors</span></div>
+  <div class="toast" id="toast" role="status"></div>
+</div>
+<script>
+'use strict';
+// Handwritten, fictional in-universe posts. Nothing is fetched from a server.
+const posts = [
+ {id:217,who:'THE GREAT PAPYRUS',handle:'COOL_SKELETON95',char:'papyrus',when:'8:04 AM',likes:17,msg:'I HAVE BEEN INFORMED THAT THIS WEBSITE HAS A "BLOCK" BUTTON.\nI WILL NOT BE USING IT.\nTHAT WOULD BE VERY RUDE.\n\nEXCEPT MAYBE FOR SANS.'},
+ {id:216,who:'sans',handle:'sans.',char:'sans',when:'7:52 AM',likes:39,msg:'wifi went out in snowdin for a minute.\n\nguess you could say we lost our connection.\n\nit was a pretty cold one anyway.'},
+ {id:215,who:'alphys',handle:'alphys',char:'alphys',when:'yesterday',likes:8,msg:'okay so the anime watch party is NOT cancelled\ni just accidentally set the date to next thursday\n\nand then i told undyne it was today\n\num. please stop coming to the lab',attach:'edited 3 times'},
+ {id:214,who:'UNDYNE',handle:'UNDYNE_REAL',char:'undyne',when:'yesterday',likes:25,msg:'WHOEVER POSTED THAT VIDEO OF ME FALLING OFF THE MOTORBIKE\nIT WAS A CONTROLLED LANDING\nDELETE IT.'},
+ {id:212,who:'napstablook',handle:'blooky',char:'blooky',when:'2 days ago',likes:11,msg:'i made another song...\n\nyou don\'t have to listen to it...\n\ni think it sounds okay with headphones...',attach:'[ attached: rainy_day_mix_03.ogg · 02:17 ]'},
+ {id:209,who:'Toriel',handle:'tori',char:'toriel',when:'2 days ago',likes:46,msg:'Hello, everyone.\nPlease remember to be kind to one another.\n\nAlso, if Papyrus sends you a message asking for your password, kindly explain that passwords should remain private.'},
+ {id:208,who:'METTATON',handle:'MTT_OFFICIAL',char:'mettaton',when:'3 days ago',likes:112,msg:'DARLINGS!\nThe rumor that my next show consists ENTIRELY of me reading compliments about myself is completely false.\n\nThere is also a dance number.',attach:'HOTLAND TV / TONIGHT / DO NOT MISS IT'},
+ {id:206,who:'temmie',handle:'tEm',char:'temmie',when:'last week',likes:23,msg:'hOI!!\ntem hav new web sight!!\nIT IS TEM SITE\n\npls click it\n\n(thank)',attach:'[ no link attached ]'},
+ {id:201,who:'Asgore',handle:'king_fluffybuns',char:'asgore',when:'last week',likes:32,msg:'Would anyone happen to know whether golden flowers prefer morning or afternoon light?\nI have misplaced my gardening book again.'}
+];
+const $ = id => document.getElementById(id);
+const escapeHTML = value => String(value).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+let view='feed',stack=['feed'],stackPos=0,filter='';
+let saved=new Set(),liked=new Set(),guestMessages=[];
+try { saved=new Set(JSON.parse(localStorage.getItem('undernet2:saved')||'[]')); liked=new Set(JSON.parse(localStorage.getItem('undernet2:liked')||'[]'));guestMessages=JSON.parse(localStorage.getItem('undernet2:guest')||'[]'); } catch(e){}
+const replies={};
+function saveState(){try{localStorage.setItem('undernet2:saved',JSON.stringify([...saved]));localStorage.setItem('undernet2:liked',JSON.stringify([...liked]));localStorage.setItem('undernet2:guest',JSON.stringify(guestMessages));}catch(e){}}
+let toastTimer;
+function toast(message){$('toast').textContent=message;$('toast').classList.add('visible');clearTimeout(toastTimer);toastTimer=setTimeout(()=>$('toast').classList.remove('visible'),1900);}
+// Small pixel portraits (24x24, no images or external assets).
+function portrait(canvas,character){let c=canvas.getContext('2d');c.imageSmoothingEnabled=false;
+ const col={bone:'#fff9ed',dark:'#2b2435',black:'#211925',red:'#d5526c',blue:'#5787bc',yellow:'#eddb7d',pink:'#f6b9ce',purple:'#9175aa',teal:'#68adaf',white:'#fff9ed',gray:'#88818c'};
+ const R=(x,y,w,h,k)=>{c.fillStyle=col[k]||k;c.fillRect(x,y,w,h);};
+ c.clearRect(0,0,24,24);R(0,0,24,24,'#cec5d2');
+ switch(character){
+ case'papyrus': R(4,3,16,13,'bone');R(7,1,10,4,'bone');R(5,8,4,4,'dark');R(15,8,4,4,'dark');R(7,14,11,2,'dark');R(9,15,2,1,'bone');R(14,15,2,1,'bone');R(1,19,22,5,'red');R(15,17,9,3,'red');break;
+ case'sans':R(4,4,16,12,'bone');R(6,2,12,4,'bone');R(5,8,6,5,'dark');R(14,8,6,5,'dark');R(5,8,3,2,'blue');R(7,15,10,1,'dark');R(1,18,22,6,'blue');R(8,18,8,6,'white');break;
+ case'alphys':R(7,0,9,5,'yellow');R(4,4,16,14,'yellow');R(3,9,3,6,'yellow');R(8,8,4,4,'pink');R(14,8,5,4,'pink');R(9,9,2,2,'dark');R(15,9,2,2,'dark');R(10,15,7,2,'dark');R(3,20,18,4,'white');break;
+ case'undyne':R(8,1,12,15,'red');R(16,0,7,6,'red');R(5,5,14,12,'teal');R(9,8,4,4,'yellow');R(16,8,3,4,'dark');R(10,9,2,2,'dark');R(8,14,10,2,'dark');R(2,19,20,5,'blue');break;
+ case'blooky':R(7,2,10,3,'white');R(5,5,14,3,'white');R(3,8,18,14,'white');R(2,17,20,6,'white');R(7,11,4,6,'dark');R(15,11,4,6,'dark');R(10,19,5,2,'gray');break;
+ case'toriel':R(5,2,14,14,'white');R(2,4,5,10,'white');R(17,4,5,10,'white');R(5,13,15,4,'white');R(7,10,4,2,'red');R(15,10,3,2,'red');R(10,14,4,2,'dark');R(3,18,18,6,'purple');R(10,19,4,5,'white');break;
+ case'mettaton':R(5,2,16,9,'dark');R(6,12,13,7,'white');R(12,13,5,2,'pink');R(12,16,4,2,'red');R(2,19,20,5,'purple');R(16,1,7,13,'dark');break;
+ case'temmie':R(5,6,14,14,'white');R(3,1,5,10,'white');R(16,1,5,10,'white');R(5,11,4,3,'dark');R(15,11,4,3,'dark');R(11,17,3,2,'dark');R(2,20,20,4,'white');break;
+ case'asgore':R(5,2,14,15,'yellow');R(2,3,5,9,'yellow');R(17,3,5,9,'yellow');R(6,8,4,3,'dark');R(14,8,4,3,'dark');R(4,13,16,6,'bone');R(2,19,20,5,'purple');break;
+ }
+}
+function postHTML(p){const isLiked=liked.has(p.id),isSaved=saved.has(p.id);return `<article class="post" id="post-${p.id}"><canvas class="avatar" width="24" height="24" data-character="${p.char}" role="img" aria-label="${escapeHTML(p.who)} avatar"></canvas><div class="post-info"><div class="post-head"><span class="user">${escapeHTML(p.who)}</span><span class="time">@${escapeHTML(p.handle)} · ${escapeHTML(p.when)}</span><span class="post-id">#${p.id}</span></div><div class="msg">${escapeHTML(p.msg)}</div>${p.attach?`<div class="attachment">${escapeHTML(p.attach)}</div>`:''}<div class="meta"><button data-act="like" data-id="${p.id}" class="${isLiked?'liked':''}">♥ ${p.likes+(isLiked?1:0)}</button><button data-act="reply" data-id="${p.id}">reply</button><button data-act="save" data-id="${p.id}" class="${isSaved?'saved':''}">${isSaved?'[saved]':'[bookmark]'}</button></div><div class="reply" id="reply-${p.id}"><input maxlength="180" aria-label="Reply text" placeholder="Write a reply (local only)"><button data-act="send" data-id="${p.id}">post</button></div><div class="reply-list" id="replies-${p.id}">${(replies[p.id]||[]).map(s=>'↳ guest_004: '+escapeHTML(s)).join('<br>')}</div></div></article>`;}
+function pageHead(label,heading,description){return `<div class="section-line">${label}</div><h1 class="headline">${heading}</h1><p class="smallnote">${description}</p>`;}
+function render(){let html='';
+ if(view==='feed'||view==='saved'){
+ html=pageHead('UNDERNET / THE MONSTER BOARD',view==='saved'?'Stuff you saved.':'hi. welcome back.','You are browsing as guest_004. Please do not feed the annoying dog.');
+ if(view==='feed')html+=`<div class="tiny-badges"><span>visitors today: 04</span><span>last reboot: ???</span><span>server: HOTLAND_LAB_03</span></div>`;
+ html+=`<div class="bar"><strong>${view==='saved'?'BOOKMARKS':'RECENT MESSAGES'}</strong><input id="search" aria-label="Search messages" placeholder="search posts..." value="${escapeHTML(filter)}"><button id="sort">${view==='feed'?'oldest first ↓':'clear'}</button></div><div id="post-list"></div><div class="footer-copy">YOU HAVE REACHED THE END OF THE INTERNET. (FOR NOW)</div>`;
+ $('content').innerHTML=html;const filtered=posts.filter(p=>(view!=='saved'||saved.has(p.id))&&(!filter||[p.who,p.handle,p.msg,p.attach||''].join(' ').toLowerCase().includes(filter.toLowerCase())));$('post-list').innerHTML=filtered.length?filtered.map(postHTML).join(''):'<div class="empty">There is nothing here. Try a different search.</div>';
+ $('content').querySelectorAll('canvas[data-character]').forEach(c=>portrait(c,c.dataset.character));
+ $('search').oninput=e=>{filter=e.target.value;renderList();};
+ $('sort').onclick=()=>{if(view==='saved'){saved.clear();saveState();render();toast('Bookmarks cleared.');}else{posts.reverse();render();}};
+ }else if(view==='directory'){
+ $('content').innerHTML=pageHead('UNDERNET / SITE DIRECTORY','the directory','Helpful places on the monster internet. Some are less helpful than others.')+`<div class="directory"><a href="#" data-portal>↳ THE SURFACE [experimental connection]</a><a href="#" data-route="feed">↳ Monster Board / Recent Messages</a><a href="#" data-route="guestbook">↳ Guestbook (sign it!)</a><a href="#" data-route="saved">↳ Your Bookmarks</a></div><div class="notice-box"><strong>DO NOT CLICK RANDOM LINKS.</strong><br>— Someone from the Royal Lab<br><br><small>Last edited by alphys, 4:12 AM</small></div>`;
+ }else if(view==='guestbook'){
+ $('content').innerHTML=pageHead('UNDERNET / GUESTBOOK','sign my guestbook','Old websites had guestbooks. This one does too. Wow.')+`<div class="notice-box"><b>guest_000:</b> first<br><b>papyrus:</b> SECOND! BUT IN SPIRIT, FIRST!<br>${guestMessages.map(s=>'<b>guest_004:</b> '+escapeHTML(s)+'<br>').join('')}</div><form id="guest-form"><input id="guest-input" maxlength="160" placeholder="say something..." aria-label="Guestbook message" style="padding:7px;border:1px solid #999;width:min(400px,78%)"><button type="submit" style="padding:7px;border:1px solid #777;background:#e7e1ea">sign</button></form><p class="smallnote" style="margin-top:10px">Saved in this browser only. Nobody else can read it.</p>`;
+ $('guest-form').onsubmit=e=>{e.preventDefault();let s=$('guest-input').value.trim();if(!s)return;guestMessages.push(s);saveState();render();toast('Guestbook signed.');};
+ }
+ $('content').querySelectorAll('[data-portal]').forEach(el=>el.onclick=e=>{e.preventDefault();navigate('portal');});
+ $('content').querySelectorAll('[data-route]').forEach(el=>el.onclick=e=>{e.preventDefault();navigate(el.dataset.route);});
+}
+function renderList(){let list=posts.filter(p=>(view!=='saved'||saved.has(p.id))&&(!filter||[p.who,p.handle,p.msg,p.attach||''].join(' ').toLowerCase().includes(filter.toLowerCase())));$('post-list').innerHTML=list.length?list.map(postHTML).join(''):'<div class="empty">No messages found.</div>';$('post-list').querySelectorAll('canvas[data-character]').forEach(c=>portrait(c,c.dataset.character));}
+function portalUrl(){try{const url=new URL(MY_SITE_URL,window.location.href);if(!['https:','http:'].includes(url.protocol))throw Error('bad scheme');return url.href;}catch(e){toast('Edit MY_SITE_URL in the HTML file.');return null;}}
+function navigate(target,record=true){if(record&&target!==view){stack=stack.slice(0,stackPos+1);stack.push(target);stackPos=stack.length-1;}view=target;let isPortal=view==='portal';$('page').hidden=isPortal;$('sidebar').hidden=isPortal;$('portal').hidden=!isPortal;$('back').disabled=stackPos===0;$('forward').disabled=stackPos>=stack.length-1;
+ $('address').textContent=isPortal?(portalUrl()||'about:blank'):'http://undernet.mon/'+({feed:'board/',saved:'bookmarks/',directory:'links.htm',guestbook:'guestbook.htm'}[view]||'');
+ $('tab-label').textContent=isPortal?'[ Surface Link / external website ]':'[ UnderNet / '+({feed:'message board',saved:'bookmarks',directory:'site directory',guestbook:'guestbook'}[view]||'')+' ]';
+ $('status-text').textContent=isPortal?'trying to connect to the surface...':'waiting for messages...';
+ document.querySelectorAll('.side-link').forEach(e=>e.classList.toggle('current',e.dataset.view===view));
+ if(isPortal){let url=portalUrl();if(url){$('portal-host').textContent=new URL(url).hostname;if($('portal-frame').getAttribute('src')!==url)$('portal-frame').src=url;}}
+ else {filter='';render();$('page').scrollTop=0;}
+}
+$('sidebar-portal').onclick=()=>navigate('portal');
+document.querySelectorAll('.side-link').forEach(b=>b.onclick=()=>navigate(b.dataset.view));
+document.querySelectorAll('.top-alert [data-portal]').forEach(a=>a.onclick=e=>{e.preventDefault();navigate('portal');});
+$('portal-back').onclick=()=>navigate('feed');$('portal-reload').onclick=()=>{let u=portalUrl();if(u)$('portal-frame').src=u;};$('portal-new').onclick=()=>{let u=portalUrl();if(u)window.open(u,'_blank','noopener,noreferrer');};
+$('back').onclick=()=>{if(stackPos>0)navigate(stack[--stackPos],false);};$('forward').onclick=()=>{if(stackPos<stack.length-1)navigate(stack[++stackPos],false);};$('home').onclick=()=>navigate('feed');$('refresh').onclick=()=>{if(view==='portal'){$('portal-reload').click();}else{render();toast('Page refreshed.');}};
+$('content').addEventListener('click',e=>{let b=e.target.closest('[data-act]');if(!b)return;let action=b.dataset.act,id=Number(b.dataset.id);if(action==='like'){liked.has(id)?liked.delete(id):liked.add(id);saveState();renderList();}else if(action==='save'){saved.has(id)?saved.delete(id):saved.add(id);saveState();renderList();toast(saved.has(id)?'Bookmarked.':'Removed from bookmarks.');}else if(action==='reply'){let r=$('reply-'+id);r.classList.toggle('visible');if(r.classList.contains('visible'))r.querySelector('input').focus();}else if(action==='send'){let box=$('reply-'+id),input=box.querySelector('input'),s=input.value.trim();if(!s)return;(replies[id]||=[]).push(s);$('replies-'+id).innerHTML=replies[id].map(x=>'↳ guest_004: '+escapeHTML(x)).join('<br>');input.value='';toast('Reply posted locally.');}});
+$('content').addEventListener('keydown',e=>{if(e.key==='Enter'&&e.target.closest('.reply')&&e.target.tagName==='INPUT')e.target.nextElementSibling.click();});
+function drawSky(){const cn=$('sky'),c=cn.getContext('2d'),W=cn.width,H=cn.height;c.imageSmoothingEnabled=false;
+ const R=(x,y,w,h,color)=>{c.fillStyle=color;c.fillRect(Math.round(x),Math.round(y),Math.round(w),Math.round(h));};
+ const bands=['#86b2de','#90bce4','#a0c9e8','#add4e7','#becedb','#d1c2d3','#d8baca'];for(let y=0;y<H;y++)R(0,y,W,1,bands[Math.min(bands.length-1,Math.floor(y/H*7))]);
+ // A few rectangular, deliberately low-resolution clouds.
+ function cloud(x,y,k){const step=8*k;const px=(a,b,w,h,color)=>R(x+a*step,y+b*step,w*step,h*step,color);px(0,3,18,4,'#7daace');px(2,2,15,4,'#d5e6f0');px(4,1,5,4,'#fffaf3');px(10,0,5,5,'#fffaf3');px(1,3,18,3,'#fffaf3');px(3,5,14,1,'#e3e9ee');px(1,6,17,1,'#8db8d7');}
+ cloud(-50,25,0.66);cloud(340,60,0.86);cloud(45,151,0.58);cloud(255,195,1.05);cloud(180,11,0.32);
+ R(0,269,W,51,'#8ea5bd');for(let i=0;i<W;i+=16){R(i,267+Math.round(Math.sin(i/41)*9),16,54,'#90a4b9');}R(0,301,W,19,'#728da4');}
+drawSky();navigate('feed',false);
+</script>
+</body>
+</html>
